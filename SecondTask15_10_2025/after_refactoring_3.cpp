@@ -25,7 +25,7 @@ namespace bdk {
         }
     }
 
-    void changinArray(int *array) {
+    void printArray(int *array) {
         for (int index = 0; index < SIZE; index++) {
             std::cout << array[index];
             std::cout << ' ';
@@ -41,7 +41,7 @@ int main() {
 
     bdk::generateArray(array);
     bdk::processingArray(array);
-    bdk::changinArray(array);
+    bdk::printArray(array);
     
     delete[] array;
     return 0;
