@@ -8,15 +8,19 @@ namespace BDK {
     extern const Menu LEARN;
     extern const Menu EXIT;
 
-    extern const Menu LEARN1;
-    extern const Menu LEARN2;
-    extern const Menu LEARN3;
+    extern const Menu LEARNMATH;
+    extern const Menu LEARNMATAN;
     extern const Menu EXITMAIN;
 
-    extern const Menu RUSSIONLAN;
-    extern const Menu RUSSIONLIT;
-    extern const Menu MATH;
-    extern const Menu FIZRA;
-    extern const Menu EXITLEARN;
+    extern const Menu PLUS;
+    extern const Menu SUBSTRUCT;
+    extern const Menu DIVISION;
+    extern const Menu MULTIPLICAT;
+    extern const Menu EXITMATH;
+
+    extern const Menu DIFISCH;
+    extern const Menu INTISCH;
+    extern const Menu EXITMATAN;
+    
 }
 

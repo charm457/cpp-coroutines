@@ -4,62 +4,79 @@
 
 namespace BDK {
 
-    const Menu RUSSIONLAN{
-        "1 - Русский язык", ru_lan, &LEARN1
+    const Menu PLUS{
+        "1 - Хочу научиться складывать", want_plus, &LEARNMATH
     };
-    const Menu RUSSIONLIT{
-        "2 - Русская литература", ru_lit, &LEARN1
+    const Menu SUBSTRUCT{
+        "2 - Хочу научиться вычитать", want_subtraction, &LEARNMATH
     };
-    const Menu MATH{
-        "3 - Математика", math, &LEARN1
+    const Menu MULTIPLICAT{
+        "3 - Хочу научиться умножать", want_multiplication, &LEARNMATH
     };
-    const Menu FIZRA{
-        "4 - Я люблю физкультуру", fiz_ed, &LEARN1
+    const Menu DIVISION{
+        "4 - Хочу научиться делить", want_division, &LEARNMATH
     };
-    const Menu EXITLEARN{
-        "0 - Выйти в предыдущее меню", exit_learn, &LEARN1
+    const Menu EXITMATH{
+        "0 - Вернуться к выбору предметов", exit_algebra, &LEARNMATH
     };
     namespace {
-        const Menu* const study_lan[] = {
+        const Menu* const studyMath_lan[] = {
             &EXITLEARN,
-            &RUSSIONLAN,
-            &RUSSIONLIT,
-            &MATH,
-            &FIZRA
+            &PLUS,
+            &SUBSTRUCT,
+            &MULTIPLICAT,
+            &DIVISION
             
         };
-        const int subjects_size = sizeof(study_lan) / sizeof(study_lan[0]);
+        const int subjectsMath_size = sizeof(studyMath_lan) / sizeof(studyMath_lan[0]);
     }
     
-    const Menu LEARN1{
-        "1 -Изучать предметы 1 класса", show_menu, &LEARN, study_lan, subjects_size
+    const Menu DIFISCH{
+        "1 - Хочу изучить дифференциальное исчисление", want_plus, &LEARNMATAN
     };
-    const Menu LEARN2{
-        "2 - Изучать предметы 2 класса",  show_menu, &LEARN, study_lan, subjects_size
+    const Menu INTISCH{
+        "2 - Хочу изучить интегральное исчисление", want_subtraction, &LEARNMATAN
     };
-    const Menu LEARN3{
-        "3 - Изучать предметы 3 класса", show_menu, &LEARN, study_lan, subjects_size
+    const Menu EXITMATAN{
+        "0 - Вернуться к выбору предметов", want_multiplication, &LEARNMATAN
+    };
+    namespace {
+        const Menu* const studyMatan_lan[] = {
+            &EXITMATAN,
+            &DIFISCH,
+            &INTISCH,
+            
+            
+        };
+        const int subjectsMatan_size = sizeof(studyMatan_lan) / sizeof(studyMatan_lan[0]);
+    }
+
+    const Menu&LEARNMATH{
+        "1 - Хочу изучить алгебру", show_menu, &LEARN, studyMath_lan, subjectsMath_size
+    };
+    const Menu LEARNMATAN{
+        "2 - хочу изучать математический анализ",  show_menu, &LEARN, studyMath_lan, subjectsMatan_size
     };
     const Menu EXITMAIN{
-        "0 - Выйти в главное меню", exit_learn, &LEARN, study_lan, subjects_size
+        "0 - Выйти в главное меню", exit_learn, &LEARN
     };
 
     namespace {
         const Menu* const study_children[] = {
             &EXITMAIN,
-            &LEARN1,
-            &LEARN2,
-            &LEARN3
+            &LEARNMATH,
+            &LEARNMATAN,
+            
             
         };
         const int learn_size = sizeof(study_children) / sizeof(study_children[0]);
     }
 
     const Menu LEARN{
-        "1 - Предметы какого класса школы вы хотите учить?", show_menu, &MAIN, study_children, learn_size  
+        "1 - Хочу учиться математике?", show_menu, &MAIN, study_children, learn_size  
     };
     const Menu EXIT{
-        "0 - Я уже закончил школу и все знаю", exit, &MAIN, study_children, learn_size  
+        "0 - Пойду полежу...", exit, &MAIN, study_children, learn_size  
     };
 
     namespace {
