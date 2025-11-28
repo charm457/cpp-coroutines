@@ -51,14 +51,14 @@ namespace BDK {
         const int subjectsMatan_size = sizeof(studyMatan_lan) / sizeof(studyMatan_lan[0]);
     }
 
-    const Menu&LEARNMATH{
+    const Menu LEARNMATH{
         "1 - Хочу изучить алгебру", show_menu, &LEARN, studyMath_lan, subjectsMath_size
     };
     const Menu LEARNMATAN{
         "2 - хочу изучать математический анализ",  show_menu, &LEARN, studyMath_lan, subjectsMatan_size
     };
     const Menu EXITMAIN{
-        "0 - Выйти в главное меню", exit_learn, &LEARN
+        "0 - Выйти в главное меню", exit, &LEARN
     };
 
     namespace {
