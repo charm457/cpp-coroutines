@@ -33,30 +33,43 @@ const BDK::Menu* BDK::show_menu(const Menu* current) {
 const BDK::Menu* BDK::exit(const Menu* current) {
     std::exit(0);
 }
-const BDK::Menu* BDK::exit_learn(const Menu* current) {
+const BDK::Menu* BDK::exit_algebra(const Menu* current) {
     return current->parent->parent;
 }
-
+const BDK::Menu* BDK::exit_matan(const Menu* current) {
+    return current->parent->parent;
+}
 //Another functions
 
 
 
-const BDK::Menu* BDK::fiz_ed(const Menu* current) {
+const BDK::Menu* BDK::want_plus(const Menu* current) {
     
     std::cout << current->title << std::endl << std::endl;
     return current->parent;
 }
-const BDK::Menu* BDK::ru_lan(const Menu* current) {
+const BDK::Menu* BDK::want_subtraction (const Menu* current) {
     
     std::cout << current->title << std::endl << std::endl;
     return current->parent;
 }
-const BDK::Menu* BDK::ru_lit(const Menu* current) {
+const BDK::Menu* BDK::want_multiplication(const Menu* current) {
     
     std::cout << current->title << std::endl << std::endl;
     return current->parent;
 }
-const BDK::Menu* BDK::math(const Menu* current) {
+const BDK::Menu* BDK::want_division(const Menu* current) {
+    
+    std::cout << current->title << std::endl << std::endl;
+    return current->parent;
+}
+
+const BDK::Menu* BDK::want_dif(const Menu* current) {
+    
+    std::cout << current->title << std::endl << std::endl;
+    return current->parent;
+}
+const BDK::Menu* BDK::want_integral(const Menu* current) {
     
     std::cout << current->title << std::endl << std::endl;
     return current->parent;
