@@ -21,7 +21,7 @@ namespace BDK {
     };
     namespace {
         const Menu* const studyMath_lan[] = {
-            &EXITLEARN,
+            &EXITMATH,
             &PLUS,
             &SUBSTRUCT,
             &MULTIPLICAT,
@@ -32,13 +32,13 @@ namespace BDK {
     }
     
     const Menu DIFISCH{
-        "1 - Хочу изучить дифференциальное исчисление", want_plus, &LEARNMATAN
+        "1 - Хочу изучить дифференциальное исчисление", want_dif, &LEARNMATAN
     };
     const Menu INTISCH{
-        "2 - Хочу изучить интегральное исчисление", want_subtraction, &LEARNMATAN
+        "2 - Хочу изучить интегральное исчисление", want_integral, &LEARNMATAN
     };
     const Menu EXITMATAN{
-        "0 - Вернуться к выбору предметов", want_multiplication, &LEARNMATAN
+        "0 - Вернуться к выбору предметов", exit_matan, &LEARNMATAN
     };
     namespace {
         const Menu* const studyMatan_lan[] = {
