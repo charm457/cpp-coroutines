@@ -8,6 +8,8 @@ namespace BDK{
 
     const Menu* exit(const Menu* current);
     
+    const Menu* exit_learn(const Menu* current);
+
     const Menu* want_plus(const Menu* current);
     const Menu* want_subtraction(const Menu* current);
     const Menu* want_multiplication(const Menu* current);

@@ -58,7 +58,7 @@ namespace BDK {
         "2 - хочу изучать математический анализ",  show_menu, &LEARN, studyMath_lan, subjectsMatan_size
     };
     const Menu EXITMAIN{
-        "0 - Выйти в главное меню", exit, &LEARN
+        "0 - Выйти в главное меню", exit_learn, &LEARN
     };
 
     namespace {

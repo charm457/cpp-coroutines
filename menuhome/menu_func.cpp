@@ -33,6 +33,9 @@ const BDK::Menu* BDK::show_menu(const Menu* current) {
 const BDK::Menu* BDK::exit(const Menu* current) {
     std::exit(0);
 }
+const BDK::Menu* BDK::exit_learn(const Menu* current) {
+    return current->parent->parent;
+}
 const BDK::Menu* BDK::exit_algebra(const Menu* current) {
     return current->parent->parent;
 }
