@@ -6,10 +6,12 @@
 *.exe
 *.obj
 
+
 # Файлы сборки проекта (CMake, Make)
 build/
 out/
 cmake-build-debug/
+lib/
 
 # Локальные файлы сборок
 Debug/
