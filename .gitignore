@@ -9,6 +9,7 @@
 
 # Файлы сборки проекта (CMake, Make)
 build/
+build_ninja/
 out/
 cmake-build-debug/
 lib/
