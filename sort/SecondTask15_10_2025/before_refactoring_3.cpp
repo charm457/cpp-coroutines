@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int main()
+int main_new()
 {
     int a[20], i, b;
     for (i = 0; i < 20; i++)

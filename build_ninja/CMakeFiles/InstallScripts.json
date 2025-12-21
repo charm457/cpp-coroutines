@@ -1,0 +1,10 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/charm/cpp-coroutines/build_ninja/cmake_install.cmake",
+		"/home/charm/cpp-coroutines/build_ninja/tests/cmake_install.cmake",
+		"/home/charm/cpp-coroutines/build_ninja/menuclass/cmake_install.cmake",
+		"/home/charm/cpp-coroutines/build_ninja/SecondTask15_10_2025/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

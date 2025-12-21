@@ -1,3 +1,8 @@
-project(srtShell)
+project(sortShell)
 
-add_executable(${PROJECT_NAME} main.cpp sortShell.cpp sortShell.hpp voidProverka.cpp voidProverka.hpp)
+
+add_executable(${PROJECT_NAME}
+    main.cpp
+    sortShell.cpp  
+    voidProverka.cpp
+)

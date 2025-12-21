@@ -1,0 +1,14 @@
+/home/charm/cpp-coroutines/build_ninja/CMakeFiles/test.dir
+/home/charm/cpp-coroutines/build_ninja/CMakeFiles/edit_cache.dir
+/home/charm/cpp-coroutines/build_ninja/CMakeFiles/rebuild_cache.dir
+/home/charm/cpp-coroutines/build_ninja/tests/CMakeFiles/test.dir
+/home/charm/cpp-coroutines/build_ninja/tests/CMakeFiles/edit_cache.dir
+/home/charm/cpp-coroutines/build_ninja/tests/CMakeFiles/rebuild_cache.dir
+/home/charm/cpp-coroutines/build_ninja/menuclass/CMakeFiles/Menuclass.dir
+/home/charm/cpp-coroutines/build_ninja/menuclass/CMakeFiles/test.dir
+/home/charm/cpp-coroutines/build_ninja/menuclass/CMakeFiles/edit_cache.dir
+/home/charm/cpp-coroutines/build_ninja/menuclass/CMakeFiles/rebuild_cache.dir
+/home/charm/cpp-coroutines/build_ninja/SecondTask15_10_2025/CMakeFiles/SecondTask15_10_2025.dir
+/home/charm/cpp-coroutines/build_ninja/SecondTask15_10_2025/CMakeFiles/test.dir
+/home/charm/cpp-coroutines/build_ninja/SecondTask15_10_2025/CMakeFiles/edit_cache.dir
+/home/charm/cpp-coroutines/build_ninja/SecondTask15_10_2025/CMakeFiles/rebuild_cache.dir
