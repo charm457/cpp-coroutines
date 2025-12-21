@@ -8,10 +8,11 @@
 
 
 # Файлы сборки проекта (CMake, Make)
-build/
+build*/
 build_ninja/
 out/
 cmake-build-debug/
+cmake-build-*/
 lib/
 
 # Локальные файлы сборок
