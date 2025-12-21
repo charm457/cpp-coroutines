@@ -1,8 +1,0 @@
-# ninja log v7
-2	27	1766331662951801166	menuclass/CMakeFiles/Menuclass.dir/menu_items.cpp.o	73e777a5aa1f07
-1	484	1766331662949862651	menuclass/CMakeFiles/Menuclass.dir/main.cpp.o	c978bf0a08c4c51
-1	489	1766331662950862638	menuclass/CMakeFiles/Menuclass.dir/menu_func.cpp.o	2a549d31ff27777e
-489	595	1766331663437856516	menuclass/Menuclass	a120e689f0ebf5d4
-2	630	1766331662952204988	SecondTask15_10_2025/CMakeFiles/SecondTask15_10_2025.dir/before_refactoring_3.cpp.o	4ea84bf2b103eea1
-3	656	1766331662952705051	SecondTask15_10_2025/CMakeFiles/SecondTask15_10_2025.dir/after_refactoring_3.cpp.o	21e41b3cef8d528b
-656	760	1766331663604854417	SecondTask15_10_2025/SecondTask15_10_2025	26444e0c01fdc258
