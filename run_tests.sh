@@ -1,3 +1,4 @@
-@echo off
-chcp 65001
-ctest -j N --output-on-failure
+#!/bin/bash
+mkdir -p build && cd build
+cmake .. && make -j4
+ctest --output-on-failure

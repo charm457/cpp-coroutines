@@ -4,12 +4,14 @@ project(cpp-coroutines)
 #add_subdirectory(sort)
 
 enable_testing()
-#add_subdirectory(sort/lib/google-tts)
+add_subdirectory(lib/googletest)
 
 
 add_subdirectory(tests)
 add_subdirectory(menuclass)
 add_subdirectory(SecondTask15_10_2025)
+add_subdirectory(buble_sort)
+
 
 
 

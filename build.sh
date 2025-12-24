@@ -11,8 +11,8 @@ cmake -G Ninja "../$SOURCE_FOLDER"
 ninja
 
 # Копируем нужные файлы
-files=("power.sh" "power2.sh")
-folders=("SecondTask15_10_2025" "menuclass")
+files=("power.sh" "power2.sh" "power3.sh")
+folders=("SecondTask15_10_2025" "menuclass" "buble_sort")
 
 for i in {0..1}; do
     src="../$SOURCE_FOLDER/${folders[$i]}/${files[$i]}"
