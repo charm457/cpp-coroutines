@@ -1,9 +1,5 @@
-target_sources(${CONTAINERS_LIB} 
-	PRIVATE
-		doubly_linked_list.cpp
-		vector.cpp
-)
+# Создаем библиотеку из твоих .cpp файлов
+add_library(${CONTAINERS_LIB} STATIC vector.cpp doubly_linked_list.cpp)
 
-target_include_directories(${CONTAINERS_LIB} PUBLIC
-	${CURRENT_SOURCE_DIR}
-)
+# Указываем, где лежат .hpp файлы, чтобы тесты их видели
+target_include_directories(${CONTAINERS_LIB} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
