@@ -11,7 +11,7 @@ namespace bdk {
 			T* arr = nullptr;
 			std::size_t capacity = START_CAPACITY;
 			std::size_t size = 0;
-
+			
 			void reserve(std::size_t new_capacity);
 
 		public:
