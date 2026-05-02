@@ -11,9 +11,13 @@ Vector<T>::Vector() {
 template<typename T>
 Vector<T>::~Vector() {
     delete[] arr;
+    arr = nullptr;
+    size = 0;
+    capacity = START_CAPACITY;
+
 }
 
-// Приватный метод для управления памятью
+
 template<typename T>
 void Vector<T>::reserve(std::size_t new_capacity) {
     T* new_arr = new T[new_capacity];
@@ -42,16 +46,27 @@ template<typename T>
 bool Vector<T>::insert(const std::size_t position, const T& value) {
     if (position > size) return false;
 
-    // Если место закончилось, расширяем массив
     if (size >= capacity) {
-        reserve(capacity * 2);
+        std::size_t new_capacity = capacity * 2;
+        T* new_arr = new T[new_capacity];
+        
+        for (std::size_t i = 0; i < size; ++i) {
+            if (i < position) {
+                new_arr[i] = arr[i];
+            } else {
+                new_arr[i + 1] = arr[i];
+            }
+        }
+        
+        delete[] arr;
+        arr = new_arr;
+        capacity = new_capacity;
+    } else {
+        for (std::size_t i = size; i > position; --i) {
+            arr[i] = arr[i - 1];
+        }
     }
-
-    // Сдвигаем элементы вправо
-    for (std::size_t i = size; i > position; --i) {
-        arr[i] = arr[i - 1];
-    }
-
+    
     arr[position] = value;
     size++;
     return true;

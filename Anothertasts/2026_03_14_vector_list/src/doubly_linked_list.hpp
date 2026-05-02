@@ -31,6 +31,7 @@ namespace bdk {
 			std::size_t get_size() const noexcept;
 			bool has_item(const T& value) const noexcept;
 			void print() const noexcept;
+			bool insert(std::size_t position, const T& value);
 			void push_back(const T& value);
 			bool remove_first(const T& value) noexcept;
 	};
