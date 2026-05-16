@@ -17,7 +17,7 @@ typedef struct GameObject {
     float horizonSpeed;
 } GameObject;
 
-char map[MAP_HEIGHT][MAP_WIDTH + 1];
+// replace map 
 GameObject mario;
 
 GameObject *bricks = NULL;
@@ -29,9 +29,9 @@ int currentLevel = 1;
 int gameScore;
 int maxLevel;
 
-// Объявления функций
-void clearMap(void);
-void displayMap(void);
+// + сигнатуры для работы с map
+void clearMap(char map[MAP_HEIGHT][MAP_WIDTH + 1]);
+void displayMap(char map[MAP_HEIGHT][MAP_WIDTH + 1]);
 void setObjectPosition(GameObject* obj, float xPos, float yPos);
 void initObject(GameObject* obj, float xPos, float yPos, float oWidth, float oHeight, char objType);
 bool checkCollision(GameObject o1, GameObject o2);
@@ -43,14 +43,16 @@ void removeEnemy(int index);
 void handleMarioCollision(void);
 void moveHorizontal(GameObject* obj);
 bool isPositionValid(int x, int y);
-void placeObjectOnMap(GameObject obj);
+void placeObjectOnMap(GameObject obj, char map[MAP_HEIGHT][MAP_WIDTH + 1]);
 void setCursorPosition(int x, int y);
 void scrollMap(float dx);
 GameObject* addNewBrick(void);
-void updateScoreOnMap(void);
+void updateScoreOnMap(char map[MAP_HEIGHT][MAP_WIDTH + 1]);
 
 
 int main() {
+    char map[MAP_HEIGHT][MAP_WIDTH + 1];
+
     initscr();
     cbreak();
     noecho();
@@ -65,7 +67,7 @@ int main() {
     bool running = true;
 
     while (running) {
-        clearMap();
+        clearMap(map);
         bool jump = false;
         bool moved = false;
 
@@ -99,7 +101,7 @@ int main() {
         handleMarioCollision();
 
         for (int i = 0; i < bricksCount; i++) {
-            placeObjectOnMap(bricks[i]);        
+            placeObjectOnMap(bricks[i], map);        
         }
 
         for (int i = 0; i < enemiesCount; i++) {
@@ -110,15 +112,15 @@ int main() {
                 i--;
                 continue;
             }
-            placeObjectOnMap(enemies[i]);
+            placeObjectOnMap(enemies[i], map);
         }
 
-        placeObjectOnMap(mario);
-        updateScoreOnMap();
+        placeObjectOnMap(mario, map);
+        updateScoreOnMap(map);
 
         clear();
         setCursorPosition(0, 0);
-        displayMap();
+        displayMap(map);
         mvprintw(0, 0, "Score: %d  Level: %d  A/D + Space | ESC to exit", gameScore, currentLevel);
 
         refresh();
@@ -130,7 +132,7 @@ int main() {
 }
 
 
-void clearMap(void) {
+void clearMap(char map[MAP_HEIGHT][MAP_WIDTH + 1]) {
     for (int i = 0; i < MAP_WIDTH; i++) {
         map[0][i] = ' ';
     }
@@ -140,7 +142,7 @@ void clearMap(void) {
     }
 }
 
-void displayMap(void) {
+void displayMap(char map[MAP_HEIGHT][MAP_WIDTH + 1]) {
     for (int j = 0; j < MAP_HEIGHT; j++) {
         mvprintw(j, 0, "%s", map[j]);
     }
@@ -320,7 +322,7 @@ bool isPositionValid(int x, int y) {
     return ((x >= 0) && (x < MAP_WIDTH) && (y >= 0) && (y < MAP_HEIGHT));
 }
 
-void placeObjectOnMap(GameObject obj) {
+void placeObjectOnMap(GameObject obj, char map[MAP_HEIGHT][MAP_WIDTH + 1]) {
     int ix = (int)round(obj.x);
     int iy = (int)round(obj.y);
     int iWidth = (int)round(obj.width);
@@ -363,7 +365,7 @@ GameObject* addNewBrick(void) {
     return bricks + bricksCount - 1;
 }
 
-void updateScoreOnMap(void) {
+void updateScoreOnMap(char map[MAP_HEIGHT][MAP_WIDTH + 1]) {
     char buffer[30];
     sprintf(buffer, "Score: %d", gameScore);
     int len = strlen(buffer);
