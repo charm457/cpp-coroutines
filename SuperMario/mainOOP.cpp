@@ -1,0 +1,305 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <ncurses.h>
+#include <cstring>
+
+#define MAP_WIDTH 80
+#define MAP_HEIGHT 40
+
+class GameObject {
+public:
+    float x, y, width, height, vertSpeed, horizonSpeed;
+    bool isFly;
+    char type;
+
+    GameObject(float x = 0, float y = 0, float w = 0, float h = 0, char t = ' ')
+        : x(x), y(y), width(w), height(h), vertSpeed(0), isFly(true), type(t), horizonSpeed(0.2f) {}
+
+    bool checkCollision(const GameObject& other) const {
+        return ((x + width) > other.x) && (x < (other.x + other.width)) &&
+               ((y + height) > other.y) && (y < (other.y + other.height));
+    }
+};
+
+void clearMap(char map[MAP_HEIGHT][MAP_WIDTH + 1]);
+void displayMap(char map[MAP_HEIGHT][MAP_WIDTH + 1]);
+void createLevel(int lvl, GameObject &mario, int &gameScore, int &maxLevel, std::vector<GameObject> &bricks, std::vector<GameObject> &enemies);
+void playerDeath(int currentLevel, GameObject &mario, int &gameScore, int &maxLevel, std::vector<GameObject> &bricks, std::vector<GameObject> &enemies);
+void moveVertical(GameObject& obj, GameObject &mario, int &currentLevel, int &maxLevel, int &gameScore, std::vector<GameObject>& bricks, std::vector<GameObject>& enemies);
+void handleMarioCollision(GameObject &mario, int &gameScore, int currentLevel, int &maxLevel, std::vector<GameObject>& enemies, std::vector<GameObject>& bricks);
+void moveHorizontal(GameObject &obj, GameObject &mario, int &currentLevel, int &maxLevel, int &gameScore, std::vector<GameObject>& bricks, std::vector<GameObject>& enemies);
+bool isPositionValid(int x, int y);
+void placeObjectOnMap(const GameObject& obj, char map[MAP_HEIGHT][MAP_WIDTH + 1]);
+void scrollMap(float dx, GameObject &mario, std::vector<GameObject>& bricks, std::vector<GameObject>& enemies);
+void updateScoreOnMap(char map[MAP_HEIGHT][MAP_WIDTH + 1], int gameScore);
+
+int main() {
+    char map[MAP_HEIGHT][MAP_WIDTH + 1];
+    GameObject mario;
+    int currentLevel = 1;
+    int gameScore = 0;
+    int maxLevel = 3;
+
+    std::vector<GameObject> bricks;
+    std::vector<GameObject> enemies;
+
+    initscr();
+    cbreak();
+    noecho();
+    keypad(stdscr, TRUE);
+    nodelay(stdscr, TRUE);
+    curs_set(0);
+
+    createLevel(currentLevel, mario, gameScore, maxLevel, bricks, enemies);
+
+    int ch;
+    float current_dx = 0;
+    bool running = true;
+
+    while (running) {
+        clearMap(map);
+        bool jump = false;
+        bool moved = false;
+
+        while ((ch = getch()) != ERR) {
+            if (ch == ' ') jump = true;
+            else if (ch == 'a' || ch == KEY_LEFT)  { current_dx = 1.0f; moved = true; } 
+            else if (ch == 'd' || ch == KEY_RIGHT) { current_dx = -1.0f; moved = true; }
+            else if (ch == 27) running = false;
+        }
+
+        if (jump && !mario.isFly) {
+            mario.vertSpeed = -1.2f;
+        }
+
+        if (!moved) {
+            current_dx *= 0.85f; 
+            if (std::fabs(current_dx) < 0.1f) current_dx = 0;
+        }
+
+        if (current_dx != 0) {
+            scrollMap(current_dx, mario, bricks, enemies);
+        }
+
+        if (mario.y > MAP_HEIGHT) {
+            playerDeath(currentLevel, mario, gameScore, maxLevel, bricks, enemies);
+        }
+
+        moveVertical(mario, mario, currentLevel, maxLevel, gameScore, bricks, enemies);
+        handleMarioCollision(mario, gameScore, currentLevel, maxLevel, enemies, bricks);
+
+        for (const auto& brick : bricks) {
+            placeObjectOnMap(brick, map);        
+        }
+
+        for (auto it = enemies.begin(); it != enemies.end(); ) {
+            moveVertical(*it, mario, currentLevel, maxLevel, gameScore, bricks, enemies);
+            moveHorizontal(*it, mario, currentLevel, maxLevel, gameScore, bricks, enemies);
+            if (it->y > MAP_HEIGHT) {
+                it = enemies.erase(it);
+            } else {
+                placeObjectOnMap(*it, map);
+                ++it;
+            }
+        }
+
+        placeObjectOnMap(mario, map);
+        updateScoreOnMap(map, gameScore);
+
+        clear();
+        move(0, 0);
+        displayMap(map);
+        mvprintw(0, 0, "Score: %d  Level: %d  A/D + Space | ESC to exit", gameScore, currentLevel);
+
+        refresh();
+        napms(10);
+    }
+
+    endwin();
+    return 0;
+}
+
+void clearMap(char map[MAP_HEIGHT][MAP_WIDTH + 1]) {
+    for (int i = 0; i < MAP_WIDTH; i++) map[0][i] = ' ';
+    map[0][MAP_WIDTH] = '\0';
+    for (int j = 0; j < MAP_HEIGHT; j++) sprintf(map[j], "%s", map[0]);
+}
+
+void displayMap(char map[MAP_HEIGHT][MAP_WIDTH + 1]) {
+    for (int j = 0; j < MAP_HEIGHT; j++) mvprintw(j, 0, "%s", map[j]);
+}
+
+void createLevel(int lvl, GameObject &mario, int &gameScore, int &maxLevel, std::vector<GameObject> &bricks, std::vector<GameObject> &enemies) {
+    bricks.clear();
+    enemies.clear();
+    mario = GameObject(39, 10, 3, 3, '@');
+    gameScore = 0;
+    maxLevel = 3;
+
+    if (lvl == 1) {
+        bricks.emplace_back(20, 20, 40, 5, '#');
+        bricks.emplace_back(30, 10, 5, 3, '?');
+        bricks.emplace_back(50, 10, 5, 3, '?');        
+        bricks.emplace_back(60, 15, 40, 10, '#');
+        bricks.emplace_back(60, 5, 10, 3, '-');
+        bricks.emplace_back(70, 5, 5, 3, '?');
+        bricks.emplace_back(75, 5, 5, 3, '-');
+        bricks.emplace_back(80, 5, 5, 3, '?');
+        bricks.emplace_back(85, 5, 10, 3, '-');
+        bricks.emplace_back(100, 20, 20, 5, '#');
+        bricks.emplace_back(120, 15, 10, 10, '#');
+        bricks.emplace_back(150, 20, 40, 5, '#');
+        bricks.emplace_back(210, 15, 10, 10, '+');
+        enemies.emplace_back(25, 10, 3, 2, 'o');
+        enemies.emplace_back(80, 10, 3, 2, 'o');        
+    } else if (lvl == 2) {
+        bricks.emplace_back(20, 20, 40, 5, '#');
+        bricks.emplace_back(60, 15, 10, 10, '#');
+        bricks.emplace_back(80, 20, 20, 5, '#');
+        bricks.emplace_back(120, 15, 10, 10, '#');
+        bricks.emplace_back(150, 20, 40, 5, '#');
+        bricks.emplace_back(210, 15, 10, 10, '+');
+        enemies.emplace_back(25, 10, 3, 2, 'o');
+        enemies.emplace_back(80, 10, 3, 2, 'o');
+        enemies.emplace_back(65, 10, 3, 2, 'o');
+        enemies.emplace_back(120, 10, 3, 2, 'o');
+        enemies.emplace_back(160, 10, 3, 2, 'o');
+        enemies.emplace_back(175, 10, 3, 2, 'o');
+    } else if (lvl == 3) {
+        bricks.emplace_back(20, 20, 40, 5, '#');
+        bricks.emplace_back(80, 20, 15, 5, '#');
+        bricks.emplace_back(120, 15, 15, 10, '#');
+        bricks.emplace_back(160, 10, 15, 15, '+');
+        enemies.emplace_back(25, 10, 3, 2, 'o');
+        enemies.emplace_back(50, 10, 3, 2, 'o');
+        enemies.emplace_back(80, 10, 3, 2, 'o');
+        enemies.emplace_back(90, 10, 3, 2, 'o');
+        enemies.emplace_back(120, 10, 3, 2, 'o');
+        enemies.emplace_back(130, 10, 3, 2, 'o');
+    }
+}
+
+void playerDeath(int currentLevel, GameObject &mario, int &gameScore, int &maxLevel, std::vector<GameObject> &bricks, std::vector<GameObject> &enemies) {
+    mvprintw(MAP_HEIGHT/2, MAP_WIDTH/2 - 5, "GAME OVER");
+    refresh();
+    napms(500);
+    createLevel(currentLevel, mario, gameScore, maxLevel, bricks, enemies);
+}
+
+void moveVertical(GameObject& obj, GameObject &mario, int &currentLevel, int &maxLevel, int &gameScore, std::vector<GameObject>& bricks, std::vector<GameObject>& enemies) {
+    obj.vertSpeed += 0.05f;
+    obj.isFly = true;
+    obj.y += obj.vertSpeed;
+
+    for (auto& brick : bricks) {
+        if (obj.checkCollision(brick)) {
+            if (obj.vertSpeed > 0) obj.isFly = false;
+
+            if (brick.type == '?' && obj.vertSpeed < 0 && &obj == &mario) {
+                brick.type = '-';
+                GameObject coin(brick.x, brick.y - 3, 3, 2, '$');
+                coin.vertSpeed = -0.7f;
+                enemies.push_back(coin);
+            }
+
+            obj.y -= obj.vertSpeed;
+            obj.vertSpeed = 0;
+
+            if (brick.type == '+') {
+                currentLevel++;
+                if (currentLevel > maxLevel) currentLevel = 1;
+                mvprintw(MAP_HEIGHT/2, MAP_WIDTH/2 - 4, "LEVEL UP!");
+                refresh();
+                napms(500);
+                createLevel(currentLevel, mario, gameScore, maxLevel, bricks, enemies);
+            }
+            break;
+        }
+    }
+}
+
+void handleMarioCollision(GameObject &mario, int &gameScore, int currentLevel, int &maxLevel, std::vector<GameObject>& enemies, std::vector<GameObject>& bricks) {
+    for (auto it = enemies.begin(); it != enemies.end(); ) {
+        if (mario.checkCollision(*it)) {
+            if (it->type == 'o') {
+                if (mario.isFly && mario.vertSpeed > 0 && (mario.y + mario.height < it->y + it->height * 0.5f)) {
+                    gameScore += 50;
+                    it = enemies.erase(it);
+                    continue;
+                } else {
+                    playerDeath(currentLevel, mario, gameScore, maxLevel, bricks, enemies);
+                    break;
+                }
+            } else if (it->type == '$') {
+                gameScore += 100;
+                it = enemies.erase(it);
+                continue;
+            }
+        }
+        ++it;
+    }
+}
+
+void moveHorizontal(GameObject &obj, GameObject &mario, int &currentLevel, int &maxLevel, int &gameScore, std::vector<GameObject>& bricks, std::vector<GameObject>& enemies) {
+    obj.x += obj.horizonSpeed;
+
+    for (const auto& brick : bricks) {
+        if (obj.checkCollision(brick)) {
+            obj.x -= obj.horizonSpeed;
+            obj.horizonSpeed = -obj.horizonSpeed;
+            return;
+        }
+    }
+
+    if (obj.type == 'o') {
+        GameObject tmp = obj;
+        moveVertical(tmp, mario, currentLevel, maxLevel, gameScore, bricks, enemies);
+        if (tmp.isFly) {
+            obj.x -= obj.horizonSpeed;
+            obj.horizonSpeed = -obj.horizonSpeed;    
+        }
+    }
+}
+
+bool isPositionValid(int x, int y) {
+    return (x >= 0 && x < MAP_WIDTH && y >= 0 && y < MAP_HEIGHT);
+}
+
+void placeObjectOnMap(const GameObject& obj, char map[MAP_HEIGHT][MAP_WIDTH + 1]) {
+    int ix = (int)round(obj.x);
+    int iy = (int)round(obj.y);
+    int iWidth = (int)round(obj.width);
+    int iHeight = (int)round(obj.height);
+
+    for (int i = ix; i < (ix + iWidth); i++) {
+        for (int j = iy; j < (iy + iHeight); j++) {
+            if (isPositionValid(i, j)) {
+                map[j][i] = obj.type;
+            }
+        }
+    }
+}
+
+void scrollMap(float dx, GameObject &mario, std::vector<GameObject>& bricks, std::vector<GameObject>& enemies) {
+    mario.x -= dx;
+    for (const auto& brick : bricks) {
+        if (mario.checkCollision(brick)) {
+            mario.x += dx;
+            return;
+        }
+    }
+    mario.x += dx;
+
+    for (auto& brick : bricks) brick.x += dx;
+    for (auto& enemy : enemies) enemy.x += dx;
+}
+
+void updateScoreOnMap(char map[MAP_HEIGHT][MAP_WIDTH + 1], int gameScore) {
+    char buffer[30];
+    sprintf(buffer, "Score: %d", gameScore);
+    int len = strlen(buffer);
+    for (int i = 0; i < len; i++) {
+        map[1][i + 5] = buffer[i];
+    }
+}
