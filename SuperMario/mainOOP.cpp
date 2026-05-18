@@ -22,20 +22,59 @@ public:
     }
 };
 
-void clearMap(char map[MAP_HEIGHT][MAP_WIDTH + 1]);
-void displayMap(char map[MAP_HEIGHT][MAP_WIDTH + 1]);
+class GameMap {
+private:
+    char map[MAP_HEIGHT][MAP_WIDTH + 1];
+
+    bool isPositionValid(int x, int y) const {
+        return (x >= 0 && x < MAP_WIDTH && y >= 0 && y < MAP_HEIGHT);
+    }
+
+public:
+    void clear() {
+        for (int i = 0; i < MAP_WIDTH; i++) map[0][i] = ' ';
+        map[0][MAP_WIDTH] = '\0';
+        for (int j = 0; j < MAP_HEIGHT; j++) sprintf(map[j], "%s", map[0]);
+    }
+
+    void display() const {
+        for (int j = 0; j < MAP_HEIGHT; j++) mvprintw(j, 0, "%s", map[j]);
+    }
+
+    void placeObject(const GameObject& obj) {
+        int ix = (int)round(obj.x);
+        int iy = (int)round(obj.y);
+        int iWidth = (int)round(obj.width);
+        int iHeight = (int)round(obj.height);
+
+        for (int i = ix; i < (ix + iWidth); i++) {
+            for (int j = iy; j < (iy + iHeight); j++) {
+                if (isPositionValid(i, j)) {
+                    map[j][i] = obj.type;
+                }
+            }
+        }
+    }
+
+    void updateScore(int score) {
+        char buffer[30];
+        sprintf(buffer, "Score: %d", score);
+        int len = strlen(buffer);
+        for (int i = 0; i < len; i++) {
+            map[1][i + 5] = buffer[i];
+        }
+    }
+};
+
 void createLevel(int lvl, GameObject &mario, int &gameScore, int &maxLevel, std::vector<GameObject> &bricks, std::vector<GameObject> &enemies);
 void playerDeath(int currentLevel, GameObject &mario, int &gameScore, int &maxLevel, std::vector<GameObject> &bricks, std::vector<GameObject> &enemies);
 void moveVertical(GameObject& obj, GameObject &mario, int &currentLevel, int &maxLevel, int &gameScore, std::vector<GameObject>& bricks, std::vector<GameObject>& enemies);
 void handleMarioCollision(GameObject &mario, int &gameScore, int currentLevel, int &maxLevel, std::vector<GameObject>& enemies, std::vector<GameObject>& bricks);
 void moveHorizontal(GameObject &obj, GameObject &mario, int &currentLevel, int &maxLevel, int &gameScore, std::vector<GameObject>& bricks, std::vector<GameObject>& enemies);
-bool isPositionValid(int x, int y);
-void placeObjectOnMap(const GameObject& obj, char map[MAP_HEIGHT][MAP_WIDTH + 1]);
 void scrollMap(float dx, GameObject &mario, std::vector<GameObject>& bricks, std::vector<GameObject>& enemies);
-void updateScoreOnMap(char map[MAP_HEIGHT][MAP_WIDTH + 1], int gameScore);
 
 int main() {
-    char map[MAP_HEIGHT][MAP_WIDTH + 1];
+    GameMap map;
     GameObject mario;
     int currentLevel = 1;
     int gameScore = 0;
@@ -58,7 +97,7 @@ int main() {
     bool running = true;
 
     while (running) {
-        clearMap(map);
+        map.clear();
         bool jump = false;
         bool moved = false;
 
@@ -69,18 +108,14 @@ int main() {
             else if (ch == 27) running = false;
         }
 
-        if (jump && !mario.isFly) {
-            mario.vertSpeed = -1.2f;
-        }
+        if (jump && !mario.isFly) mario.vertSpeed = -1.2f;
 
         if (!moved) {
             current_dx *= 0.85f; 
             if (std::fabs(current_dx) < 0.1f) current_dx = 0;
         }
 
-        if (current_dx != 0) {
-            scrollMap(current_dx, mario, bricks, enemies);
-        }
+        if (current_dx != 0) scrollMap(current_dx, mario, bricks, enemies);
 
         if (mario.y > MAP_HEIGHT) {
             playerDeath(currentLevel, mario, gameScore, maxLevel, bricks, enemies);
@@ -89,9 +124,7 @@ int main() {
         moveVertical(mario, mario, currentLevel, maxLevel, gameScore, bricks, enemies);
         handleMarioCollision(mario, gameScore, currentLevel, maxLevel, enemies, bricks);
 
-        for (const auto& brick : bricks) {
-            placeObjectOnMap(brick, map);        
-        }
+        for (const auto& brick : bricks) map.placeObject(brick);
 
         for (auto it = enemies.begin(); it != enemies.end(); ) {
             moveVertical(*it, mario, currentLevel, maxLevel, gameScore, bricks, enemies);
@@ -99,17 +132,17 @@ int main() {
             if (it->y > MAP_HEIGHT) {
                 it = enemies.erase(it);
             } else {
-                placeObjectOnMap(*it, map);
+                map.placeObject(*it);
                 ++it;
             }
         }
 
-        placeObjectOnMap(mario, map);
-        updateScoreOnMap(map, gameScore);
+        map.placeObject(mario);
+        map.updateScore(gameScore);
 
         clear();
         move(0, 0);
-        displayMap(map);
+        map.display();
         mvprintw(0, 0, "Score: %d  Level: %d  A/D + Space | ESC to exit", gameScore, currentLevel);
 
         refresh();
@@ -120,16 +153,7 @@ int main() {
     return 0;
 }
 
-void clearMap(char map[MAP_HEIGHT][MAP_WIDTH + 1]) {
-    for (int i = 0; i < MAP_WIDTH; i++) map[0][i] = ' ';
-    map[0][MAP_WIDTH] = '\0';
-    for (int j = 0; j < MAP_HEIGHT; j++) sprintf(map[j], "%s", map[0]);
-}
-
-void displayMap(char map[MAP_HEIGHT][MAP_WIDTH + 1]) {
-    for (int j = 0; j < MAP_HEIGHT; j++) mvprintw(j, 0, "%s", map[j]);
-}
-
+// Logic implementations same as commit 1
 void createLevel(int lvl, GameObject &mario, int &gameScore, int &maxLevel, std::vector<GameObject> &bricks, std::vector<GameObject> &enemies) {
     bricks.clear();
     enemies.clear();
@@ -262,25 +286,6 @@ void moveHorizontal(GameObject &obj, GameObject &mario, int &currentLevel, int &
     }
 }
 
-bool isPositionValid(int x, int y) {
-    return (x >= 0 && x < MAP_WIDTH && y >= 0 && y < MAP_HEIGHT);
-}
-
-void placeObjectOnMap(const GameObject& obj, char map[MAP_HEIGHT][MAP_WIDTH + 1]) {
-    int ix = (int)round(obj.x);
-    int iy = (int)round(obj.y);
-    int iWidth = (int)round(obj.width);
-    int iHeight = (int)round(obj.height);
-
-    for (int i = ix; i < (ix + iWidth); i++) {
-        for (int j = iy; j < (iy + iHeight); j++) {
-            if (isPositionValid(i, j)) {
-                map[j][i] = obj.type;
-            }
-        }
-    }
-}
-
 void scrollMap(float dx, GameObject &mario, std::vector<GameObject>& bricks, std::vector<GameObject>& enemies) {
     mario.x -= dx;
     for (const auto& brick : bricks) {
@@ -293,13 +298,4 @@ void scrollMap(float dx, GameObject &mario, std::vector<GameObject>& bricks, std
 
     for (auto& brick : bricks) brick.x += dx;
     for (auto& enemy : enemies) enemy.x += dx;
-}
-
-void updateScoreOnMap(char map[MAP_HEIGHT][MAP_WIDTH + 1], int gameScore) {
-    char buffer[30];
-    sprintf(buffer, "Score: %d", gameScore);
-    int len = strlen(buffer);
-    for (int i = 0; i < len; i++) {
-        map[1][i + 5] = buffer[i];
-    }
 }
