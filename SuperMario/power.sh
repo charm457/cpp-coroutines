@@ -1,35 +1,47 @@
 #!/bin/bash
 
-# Цвета для вывода
+# Создаем цвета для вывода
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-echo -e "${GREEN}================================${NC}"
-echo -e "${GREEN}   Mario Game Launcher${NC}"
-echo -e "${GREEN}================================${NC}"
+echo -e "${YELLOW}Начинаем сборку игры...${NC}"
 
+# Создаем папку bin, если её нет
+if [ ! -d "bin" ]; then
+    mkdir -p bin
+    echo -e "${GREEN}Создана папка bin${NC}"
+fi
+
+# Имя исполняемого файла
+EXECUTABLE="bin/mario_game"
 
 # Компиляция
-echo -e "${YELLOW}Compiling game...${NC}"
-gcc -o mario_game mainOOP.c -lm -lncurses
+echo -e "${YELLOW}Компиляция mainOOP.cpp...${NC}"
+g++ mainOOP.cpp -o $EXECUTABLE -lstdc++ -lncurses -Wall -Wextra
 
+# Проверка успешности компиляции
 if [ $? -eq 0 ]; then
-    echo -e "${GREEN}Compilation successful!${NC}"
-    echo -e "${YELLOW}Starting game...${NC}"
-    echo -e "${GREEN}================================${NC}"
-    sleep 1
+    echo -e "${GREEN}✓ Компиляция успешна!${NC}"
+    echo -e "${GREEN}✓ Исполняемый файл создан: $EXECUTABLE${NC}"
     
-    # Запуск игры
-    ./mario_game
+    # Делаем файл исполняемым
+    chmod +x $EXECUTABLE
     
-    # Очистка после игры
-    clear
-    echo -e "${GREEN}================================${NC}"
-    echo -e "${GREEN}Game exited!${NC}"
-    echo -e "${GREEN}================================${NC}"
+    # Показываем размер файла
+    SIZE=$(du -h $EXECUTABLE | cut -f1)
+    echo -e "${GREEN}✓ Размер файла: $SIZE${NC}"
+    
+    echo -e "\n${YELLOW}Запустить игру можно командой:${NC}"
+    echo -e "./$EXECUTABLE"
+    
+    # Спрашиваем, запустить ли игру
+    read -p "Запустить игру сейчас? (y/n): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        ./$EXECUTABLE
+    fi
 else
-    echo -e "${RED}Compilation failed!${NC}"
+    echo -e "${RED}✗ Ошибка компиляции!${NC}"
     exit 1
-fi
