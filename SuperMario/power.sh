@@ -13,7 +13,7 @@ echo -e "${GREEN}================================${NC}"
 
 # Компиляция
 echo -e "${YELLOW}Compiling game...${NC}"
-gcc -o mario_game mainCopyWrite.c -lm -lncurses
+gcc -o mario_game mainOOP.c -lm -lncurses
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}Compilation successful!${NC}"
