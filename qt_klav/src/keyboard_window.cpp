@@ -37,6 +37,13 @@ KeyBoardWindow::KeyBoardWindow(QWidget* parent) : QWidget(parent) {
     main_layout->addWidget(keyboard);
 }
 
+void KeyBoardWindow::open_window() {
+	show();
+	raise();
+	activateWindow();
+	setFocus();
+}
+
 void KeyBoardWindow::keyPressEvent(QKeyEvent* event) {
 	const int key = event->nativeVirtualKey();
 	if (!keyboard->is_key_allowed(key)) {

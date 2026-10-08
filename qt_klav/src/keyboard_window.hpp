@@ -10,13 +10,18 @@
 
 namespace biv {
 	class KeyBoardWindow : public QWidget {
+		Q_OBJECT
+
 		private:
 			QPlainTextEdit* display;
 			KeyBoard* keyboard;
 
 		public:
 			KeyBoardWindow(QWidget* parent = nullptr);
-			
+
+		public slots:
+			void open_window();
+
 		protected:
 			void keyPressEvent(QKeyEvent* event) override;
 
