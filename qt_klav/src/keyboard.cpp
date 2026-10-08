@@ -25,6 +25,7 @@ KeyBoard::KeyBoard(const int width, QWidget* parent)
 	KeyBoardButton* tab_btn = new KeyBoardButton("Tab");
 	tab_btn->setMinimumSize(2 * button_width, button_width);
 	keys_layout->addWidget(tab_btn, 2, 0, 2, 3);
+	register_button(tab_btn, KEY_TAB);
 	
 	create_buttons(keyboard_data->get_line2(), keys_layout, 2, 3);
 	
@@ -32,6 +33,7 @@ KeyBoard::KeyBoard(const int width, QWidget* parent)
 	KeyBoardButton* caps_btn = new KeyBoardButton("Caps");
 	caps_btn->setMinimumSize(2 * button_width, button_width);
 	keys_layout->addWidget(caps_btn, 4, 0, 2, 4);
+	register_button(caps_btn, KEY_CAPS);
 	
 	create_buttons(keyboard_data->get_line3(), keys_layout, 4, 4);
 	
@@ -44,12 +46,14 @@ KeyBoard::KeyBoard(const int width, QWidget* parent)
 	KeyBoardButton* left_shift_btn = new KeyBoardButton("Shift");
 	left_shift_btn->setMinimumSize(2 * button_width, button_width);
 	keys_layout->addWidget(left_shift_btn, 6, 0, 2, 5);
+	register_button(left_shift_btn, KEY_SHIFT);
 	
 	create_buttons(keyboard_data->get_line4(), keys_layout, 6, 5);
 	
 	KeyBoardButton* right_shift_btn = new KeyBoardButton("Shift");
 	right_shift_btn->setMinimumSize(2 * button_width, button_width);
 	keys_layout->addWidget(right_shift_btn, 6, 25, 2, 4);
+	register_button(right_shift_btn, KEY_SHIFT);
 
 	// 5-я линия
 	KeyBoardButton* space = new KeyBoardButton();
@@ -67,11 +71,35 @@ void KeyBoard::animate_button(const int code) {
 }
 
 QString KeyBoard::get_key_text(const int code) const {
-	return buttons.at(code)->text();
+	const QString text = buttons.at(code)->text();
+	
+	// Цифры и знаки не меняются (таблица символов со Shift не задана),
+	// а буквы печатаются строчными, если не включён CapsLock/Shift.
+	if (text.size() != 1 || !text.at(0).isLetter()) {
+		return text;
+	}
+	
+	const bool upper = (shift_on || shift_held) != caps_on;
+	return upper ? text.toUpper() : text.toLower();
 }
 
 bool KeyBoard::is_key_allowed(const int code) const noexcept {
 	return keyboard_data->is_key_allowed(code);
+}
+
+void KeyBoard::toggle_shift() {
+	shift_on = !shift_on;
+	update_shift_buttons();
+}
+
+void KeyBoard::toggle_caps() {
+	caps_on = !caps_on;
+	buttons.at(KEY_CAPS)->setDown(caps_on);
+}
+
+void KeyBoard::set_shift_held(const bool held) {
+	shift_held = held;
+	update_shift_buttons();
 }
 
 // ----------------------------------------------------------------------------
@@ -97,7 +125,19 @@ void KeyBoard::register_button(KeyBoardButton* btn, const int code) {
 	btn->setObjectName(QString::number(code));
 	buttons[code] = btn;
 	
+	if (code == KEY_SHIFT) {
+		shift_buttons.push_back(btn);
+	}
+	
 	connect(btn, &QPushButton::clicked, this, [this, code]() {
 		emit key_clicked(code);
 	});
+}
+
+void KeyBoard::update_shift_buttons() {
+	const bool down = shift_on || shift_held;
+	
+	for (KeyBoardButton* btn : shift_buttons) {
+		btn->setDown(down);
+	}
 }

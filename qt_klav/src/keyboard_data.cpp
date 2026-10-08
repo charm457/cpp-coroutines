@@ -37,5 +37,6 @@ bool KeyBoardData::is_key_allowed(const int code) const noexcept {
 		}
 	}
 	
-	return code == KEY_BACKSPACE || code == KEY_ENTER || code == KEY_SPACE;
+	return code == KEY_BACKSPACE || code == KEY_TAB || code == KEY_ENTER
+		|| code == KEY_SHIFT || code == KEY_CAPS || code == KEY_SPACE;
 }

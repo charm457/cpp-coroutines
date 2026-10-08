@@ -24,6 +24,7 @@ namespace biv {
 
 		protected:
 			void keyPressEvent(QKeyEvent* event) override;
+			void keyReleaseEvent(QKeyEvent* event) override;
 
 		private slots:
 			void on_key_clicked(const int code);

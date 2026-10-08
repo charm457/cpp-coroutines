@@ -9,6 +9,9 @@ namespace biv {
 	};
 
 	inline constexpr int KEY_BACKSPACE = 8;
+	inline constexpr int KEY_TAB = 9;
 	inline constexpr int KEY_ENTER = 13;
+	inline constexpr int KEY_SHIFT = 16;
+	inline constexpr int KEY_CAPS = 20;
 	inline constexpr int KEY_SPACE = 32;
 }

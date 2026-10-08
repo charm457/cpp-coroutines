@@ -53,8 +53,31 @@ void KeyBoardWindow::keyPressEvent(QKeyEvent* event) {
 		return;
 	}
 	
+	// Физический Shift — не защёлка, а «пока зажат».
+	if (key == KEY_SHIFT) {
+		keyboard->set_shift_held(true);
+		return;
+	}
+	
+	// Caps: без анимации — кнопка сама показывает состояние (setDown),
+	// а удержание не должно мигать состоянием.
+	if (key == KEY_CAPS) {
+		if (!event->isAutoRepeat()) {
+			handle_key(key);
+		}
+		return;
+	}
+	
 	keyboard->animate_button(key);
 	handle_key(key);
+}
+
+void KeyBoardWindow::keyReleaseEvent(QKeyEvent* event) {
+	if (event->nativeVirtualKey() == KEY_SHIFT) {
+		keyboard->set_shift_held(false);
+	}
+	
+	QWidget::keyReleaseEvent(event);
 }
 
 // ----------------------------------------------------------------------------
@@ -75,6 +98,12 @@ void KeyBoardWindow::handle_key(const int code) {
 		insert_text("\n");
 	} else if (code == KEY_SPACE) {
 		insert_text(" ");
+	} else if (code == KEY_TAB) {
+		insert_text("\t");
+	} else if (code == KEY_SHIFT) {
+		keyboard->toggle_shift();
+	} else if (code == KEY_CAPS) {
+		keyboard->toggle_caps();
 	} else {
 		insert_text(keyboard->get_key_text(code));
 	}
