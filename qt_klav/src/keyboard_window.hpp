@@ -25,6 +25,9 @@ namespace biv {
 		protected:
 			void keyPressEvent(QKeyEvent* event) override;
 
+		private slots:
+			void on_key_clicked(const int code);
+			
 		private:
 			void handle_key(const int code);
 			void insert_text(const QString& text);

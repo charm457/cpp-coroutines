@@ -1,5 +1,7 @@
 #include "keyboard.hpp"
 
+#include <QTimer>
+
 using biv::KeyBoard;
 
 KeyBoard::KeyBoard(const int width, QWidget* parent) 
@@ -17,7 +19,7 @@ KeyBoard::KeyBoard(const int width, QWidget* parent)
 	KeyBoardButton* backspace_btn = new KeyBoardButton("Удалить");
 	backspace_btn->setMinimumSize(2 * button_width, button_width);
 	keys_layout->addWidget(backspace_btn, 0, 26, 2, 3);
-	buttons[KEY_BACKSPACE] = backspace_btn;
+	register_button(backspace_btn, KEY_BACKSPACE);
 
 	// 2-я линия
 	KeyBoardButton* tab_btn = new KeyBoardButton("Tab");
@@ -36,7 +38,7 @@ KeyBoard::KeyBoard(const int width, QWidget* parent)
 	KeyBoardButton* enter_btn = new KeyBoardButton("Enter");
 	enter_btn->setMinimumSize(2 * button_width, button_width);
 	keys_layout->addWidget(enter_btn, 4, 26, 2, 3);
-	buttons[KEY_ENTER] = enter_btn;
+	register_button(enter_btn, KEY_ENTER);
 	
 	// 4-я линия
 	KeyBoardButton* left_shift_btn = new KeyBoardButton("Shift");
@@ -53,11 +55,15 @@ KeyBoard::KeyBoard(const int width, QWidget* parent)
 	KeyBoardButton* space = new KeyBoardButton();
 	space->setMinimumSize(8 * button_width, button_width);
 	keys_layout->addWidget(space, 8, 7, 2, 16);
-	buttons[KEY_SPACE] = space;
+	register_button(space, KEY_SPACE);
 }
 
 void KeyBoard::animate_button(const int code) {
-	buttons.at(code)->animateClick();
+	// Визуальное нажатие без эмита clicked(), чтобы символ
+	// не вставлялся дважды (логику выполняет handle_key).
+	KeyBoardButton* btn = buttons.at(code);
+	btn->setDown(true);
+	QTimer::singleShot(120, btn, [btn]() { btn->setDown(false); });
 }
 
 QString KeyBoard::get_key_text(const int code) const {
@@ -83,6 +89,15 @@ void KeyBoard::create_buttons(
         
 		layout->addWidget(btn, line, i * 2 + start_position, 2, 2);
 		
-		buttons[data[i].code] = btn;
+		register_button(btn, data[i].code);
 	}
+}
+
+void KeyBoard::register_button(KeyBoardButton* btn, const int code) {
+	btn->setObjectName(QString::number(code));
+	buttons[code] = btn;
+	
+	connect(btn, &QPushButton::clicked, this, [this, code]() {
+		emit key_clicked(code);
+	});
 }

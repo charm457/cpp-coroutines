@@ -30,6 +30,8 @@ KeyBoardWindow::KeyBoardWindow(QWidget* parent) : QWidget(parent) {
 	display->setPlainText("Помоги мне заработать лучше...");
 
 	keyboard = new KeyBoard(keyboard_width);
+	
+	connect(keyboard, &KeyBoard::key_clicked, this, &KeyBoardWindow::on_key_clicked);
 
     QVBoxLayout* main_layout = new QVBoxLayout(this);
 	main_layout->addLayout(smail_layout);
@@ -58,6 +60,14 @@ void KeyBoardWindow::keyPressEvent(QKeyEvent* event) {
 // ----------------------------------------------------------------------------
 // 						PRIVATE
 // ----------------------------------------------------------------------------
+void KeyBoardWindow::on_key_clicked(const int code) {
+	if (!keyboard->is_key_allowed(code)) {
+		return;
+	}
+	
+	handle_key(code);
+}
+
 void KeyBoardWindow::handle_key(const int code) {
 	if (code == KEY_BACKSPACE) {
 		delete_last_char();

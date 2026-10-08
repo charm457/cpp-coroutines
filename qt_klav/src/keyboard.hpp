@@ -12,6 +12,8 @@
 
 namespace biv {
 	class KeyBoard : public QWidget {
+		Q_OBJECT
+		
 		private:
 			const int button_width;
 			std::unordered_map<int, KeyBoardButton*> buttons;
@@ -25,6 +27,9 @@ namespace biv {
 			QString get_key_text(const int code) const;
 			bool is_key_allowed(const int code) const noexcept;
 			
+		signals:
+			void key_clicked(const int code);
+			
 		private:
 			void create_buttons(
 				const std::vector<KeyData>& data, 
@@ -32,5 +37,7 @@ namespace biv {
 				const int line,
 				const int start_position
 			);
+			
+			void register_button(KeyBoardButton* btn, const int code);
 	};
 }
