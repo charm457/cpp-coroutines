@@ -9,6 +9,9 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Для IntelliSense в VS Code: генерирует build_ninja/compile_commands.json
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
@@ -28,6 +31,8 @@ qt_add_executable(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
+# WIN32_EXECUTABLE — только для Windows (GUI-приложение без консоли).
+# На Linux/macOS это свойство CMake просто игнорирует, бинарник обычный.
 set_target_properties(${PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE TRUE)
 
 qt_finalize_executable(${PROJECT_NAME})

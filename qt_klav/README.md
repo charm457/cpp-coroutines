@@ -96,6 +96,28 @@ cd c:\cpp-coroutines\qt_klav\build_ninja
 
 ---
 
+### Linux (bash)
+
+**Сборка:**
+```bash
+cd /путь/к/cpp-coroutines/qt_klav
+chmod +x build.sh run.sh   # один раз
+./build.sh
+```
+
+**Запуск:**
+```bash
+./run.sh
+```
+
+Нужен Qt6 для разработки:
+- Debian/Ubuntu: `sudo apt install cmake ninja-build qt6-base-dev`
+- Arch: `sudo pacman -S cmake ninja qt6-base`
+
+Нет `ninja` — скрипт сам соберёт через обычные makefiles.
+
+---
+
 ## 5. Если что-то пошло не так
 
 | Симптом | Причина / решение |
@@ -106,3 +128,6 @@ cd c:\cpp-coroutines\qt_klav\build_ninja
 | Смайлик не отображается | Программа запущена не из папки `build_ninja` |
 | Клавиши не вводят текст | Окно неактивно — кликните по окну мышкой |
 | Ошибка про `c++` не найден | В PATH первый `c++` не из MSYS2 — см. раздел 1, шаг 3 |
+| `./build.sh: Permission denied` | Выполните один раз `chmod +x build.sh run.sh` |
+| `Could not find Qt6Config.cmake` (Linux) | Нет пакета Qt6 — `sudo apt install qt6-base-dev` (см. раздел 4) |
+| Красные подчёркивания в VS Code | IntelliSense не видит Qt: `Ctrl+Shift+P` → «Developer: Reload Window» (см. `.vscode/c_cpp_properties.json`) |
