@@ -37,5 +37,8 @@ WelcomeWindow::WelcomeWindow(QWidget* parent) : QWidget(parent) {
 	layout->addWidget(go_to_keyboard);
 	layout->addStretch();
 
-	connect(go_to_keyboard, &QPushButton::clicked, this, &WelcomeWindow::keyboard_requested);
+	connect(go_to_keyboard, &QPushButton::clicked, this, [this]() {
+		emit keyboard_requested();  // сообщить main: пора открывать клавиатуру
+		hide();                     // окно прячет само себя — main не трогает объекты
+	});
 }

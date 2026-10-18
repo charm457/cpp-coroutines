@@ -1,7 +1,10 @@
 #include "keyboard_window.hpp"
 
+#include <iostream>
+
 #include <QHBoxLayout>
 #include <QKeyEvent>       // Добавлено для корректной работы QKeyEvent
+#include <QKeySequence>
 #include <QLabel>
 #include <QPixmap>
 #include <QTextCursor>
@@ -52,7 +55,7 @@ void KeyBoardWindow::open_window() {
 
 void KeyBoardWindow::keyPressEvent(QKeyEvent* event) {
     const int key = event->key(); 
-    
+    std::cout << "[Физ. клавиатура] клавиша " << key << std::endl;
     if (!keyboard->is_key_allowed(key)) {
         QWidget::keyPressEvent(event);
         return;
@@ -89,7 +92,6 @@ void KeyBoardWindow::on_key_clicked(const int code) {
     if (!keyboard->is_key_allowed(code)) {
         return;
     }
-    
     handle_key(code);
 }
 

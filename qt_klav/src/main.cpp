@@ -10,9 +10,10 @@ int main(int argc, char* argv[]) {
     biv::KeyBoardWindow keyboard_window;
 
     QObject::connect(&welcome_window, &biv::WelcomeWindow::keyboard_requested,
-        &keyboard_window, &biv::KeyBoardWindow::open_window);
-    QObject::connect(&welcome_window, &biv::WelcomeWindow::keyboard_requested,
-        &welcome_window, &QWidget::hide);
+        [&]() {
+            keyboard_window.open_window();  
+            welcome_window.hide();
+        });
 
     welcome_window.show();
 	

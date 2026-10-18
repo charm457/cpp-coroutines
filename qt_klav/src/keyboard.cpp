@@ -1,5 +1,7 @@
 #include "keyboard.hpp"
 
+#include <iostream>
+
 #include <QTimer>
 
 using biv::KeyBoard;
@@ -130,6 +132,7 @@ void KeyBoard::register_button(KeyBoardButton* btn, const int code) {
 	}
 	
 	connect(btn, &QPushButton::clicked, this, [this, code]() {
+		std::cout << "[Мышь] клик по кнопке " << code << std::endl;
 		emit key_clicked(code);
 	});
 }
